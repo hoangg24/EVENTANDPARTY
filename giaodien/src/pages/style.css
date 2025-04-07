@@ -1,0 +1,16 @@
+/* styles.css */
+.my-link {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #4CAF50; /* Màu nền */
+    color: white; /* Màu chữ */
+    text-align: center;
+    text-decoration: none; /* Xóa gạch chân */
+    border-radius: 5px; /* Bo góc */
+    transition: background-color 0.3s ease; /* Hiệu ứng hover */
+  }
+  
+  .my-link:hover {
+    background-color: #45a049; /* Màu nền khi hover */
+  }
+  
