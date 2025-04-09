@@ -33,6 +33,12 @@ const CategoryManagement = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+  
+    if (!formData.name.trim()) {
+      alert("Please fill out this field");
+      return;
+    }
+  
     setLoading(true);
     setError(null);
     try {
@@ -52,7 +58,7 @@ const CategoryManagement = () => {
       setLoading(false);
     }
   };
-
+  
   const handleEdit = (category) => {
     setFormData({ name: category.name });
     setEditingCategoryId(category._id);
@@ -100,7 +106,7 @@ const CategoryManagement = () => {
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all"
-            required
+            
           />
         </div>
         <div className="flex gap-4">
