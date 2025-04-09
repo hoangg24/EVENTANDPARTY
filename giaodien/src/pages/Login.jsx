@@ -8,7 +8,9 @@ import { motion } from "framer-motion";
 const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [isLoading, setIsLoading] = useState(false);
-  
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupMessage, setPopupMessage] = useState("");
+
   const [showPassword, setShowPassword] = useState(false);
   const { login } = useContext(UserContext);
   const navigate = useNavigate();
@@ -20,9 +22,15 @@ const Login = () => {
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+  
+    if (!formData.email.trim() || !formData.password.trim()) {
+      setPopupMessage("Vui lòng nhập đầy đủ thông tin đăng nhập");
+      setShowPopup(true);
+      return;
+    }
+  
     setIsLoading(true);
     try {
       const response = await axios.post(
@@ -41,11 +49,13 @@ const Login = () => {
         navigate("/");
       }
     } catch (error) {
-      alert(error.response.data.message);
+      setPopupMessage(error.response?.data?.message || "Đã xảy ra lỗi");
+      setShowPopup(true);
     } finally {
       setIsLoading(false);
     }
   };
+  
 
   const containerVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -83,6 +93,17 @@ const Login = () => {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
+        {showPopup && (
+  <div className="mb-4 text-sm text-red-600 bg-red-100 border border-red-300 rounded-lg p-3">
+    {popupMessage}
+    <button
+      onClick={() => setShowPopup(false)}
+      className="ml-2 text-red-500 font-medium hover:underline"
+    >
+    
+    </button>
+  </div>
+)}
           <div className="space-y-6">
             {/* Email Field */}
             <div className="relative group">
@@ -98,7 +119,6 @@ const Login = () => {
                   id="email"
                   name="email"
                   type="email"
-                  required
                   value={formData.email}
                   onChange={handleChange}
                   className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent shadow-sm transition-all duration-300 hover:border-indigo-300 text-gray-900 placeholder-gray-400"
@@ -121,7 +141,6 @@ const Login = () => {
                   id="password"
                   name="password"
                   type={showPassword ? "text" : "password"}
-                  required
                   value={formData.password}
                   onChange={handleChange}
                   className="w-full pl-10 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent shadow-sm transition-all duration-300 hover:border-indigo-300 text-gray-900 placeholder-gray-400"
