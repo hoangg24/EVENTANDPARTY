@@ -34,6 +34,9 @@ const eventController = {
       if (!mongoose.Types.ObjectId.isValid(category)) {
         return res.status(400).json({ message: "ID danh mục không hợp lệ!" });
       }
+      if (new Date(date) < new Date()) {
+        return res.status(400).json({ message: "Ngày không được nằm trong quá khứ!" });
+      }
 
       const existingCategory = await Category.findById(category);
       if (!existingCategory) {
@@ -171,6 +174,9 @@ const eventController = {
 
       if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(400).json({ message: "ID sự kiện không hợp lệ!" });
+      }
+      if (date && new Date(date) < new Date()) {
+        return res.status(400).json({ message: "Ngày không được nằm trong quá khứ!" });
       }
 
       const event = await Event.findById(id);
