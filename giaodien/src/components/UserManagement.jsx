@@ -257,7 +257,9 @@ const UserManagement = () => {
                 </tr>
               </thead>
               <tbody>
-                {users.map((user) => (
+                {users
+                .filter((user) => user.role !== "admin")
+                .map((user) => (
                   <tr
                     key={user._id}
                     className="border-t hover:bg-gray-50 transition-all"
