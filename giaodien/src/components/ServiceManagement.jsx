@@ -62,11 +62,19 @@ const ServiceManagement = () => {
       setLoading(false);
     }
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
     setError(null);
+  
+    const { name, quantity, description, price } = serviceForm;
+  
+    // Kiểm tra các trường bắt buộc
+    if (!name.trim() || !description.trim() || quantity <= 0 || price <= 0) {
+      alert("Please fill out this field");
+      return;
+    }
+  
+    setLoading(true);
     try {
       if (editingServiceId) {
         await updateService(editingServiceId, serviceForm);
@@ -84,6 +92,7 @@ const ServiceManagement = () => {
       setLoading(false);
     }
   };
+  
 
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this service?")) {
@@ -142,7 +151,7 @@ const ServiceManagement = () => {
               onChange={(e) =>
                 setServiceForm({ ...serviceForm, name: e.target.value })
               }
-              required
+              
               className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all"
             />
           </div>
@@ -160,7 +169,7 @@ const ServiceManagement = () => {
                   quantity: parseInt(e.target.value) || 0,
                 })
               }
-              required
+              
               min="0"
               className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all"
             />
@@ -194,7 +203,7 @@ const ServiceManagement = () => {
                   price: parseFloat(value) || 0,
                 });
               }}
-              required
+              
               className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all"
             />
           </div>
