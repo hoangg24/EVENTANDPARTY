@@ -9,6 +9,7 @@ router.post("/register", userController.registerUser);
 router.post("/login", userController.loginUser);
 // Lấy danh sách người dùng
 router.get("/", userController.getAllUsers);
+router.get("/:id", userController.getUserById);
 
 // Cập nhật thông tin người dùng
 router.put("/:id", userController.updateUser);

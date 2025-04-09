@@ -2,6 +2,7 @@ import axios from "axios";
 
 const API_URL = `${import.meta.env.VITE_API_URL}/event`;
 
+
 // Hàm để lấy token từ localStorage và thêm vào header
 const getAuthHeaders = () => {
   const token = localStorage.getItem("token"); // Lấy token từ localStorage

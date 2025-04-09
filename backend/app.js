@@ -16,6 +16,7 @@ import paymentRoutes from './routes/paymentRoutes.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import roleRoutes from './routes/roleRoutes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -42,6 +43,7 @@ app.use("/api/services", serviceRoutes);
 app.use('/api/invoices', invoiceRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/payments', paymentRoutes);
+app.use('/api/roles', roleRoutes);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.listen(PORT, async () => {

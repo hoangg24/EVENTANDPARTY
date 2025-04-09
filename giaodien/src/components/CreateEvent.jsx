@@ -6,6 +6,8 @@ import { Calendar, MapPin, Image as ImageIcon, Loader2 } from "lucide-react";
 
 function App() {
   const [categories, setCategories] = useState([]);
+  const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
+
   const [eventData, setEventData] = useState({
     name: "",
     date: "",
@@ -43,11 +45,21 @@ function App() {
   const handleChange = (e) => {
     const { name, value, files } = e.target;
     if (name === "image") {
-      setEventData({ ...eventData, image: files[0] });
+      const file = files[0];
+      setEventData({ ...eventData, image: file });
+
+      // Tạo URL tạm thời để preview
+      if (file) {
+        const previewUrl = URL.createObjectURL(file);
+        setImagePreviewUrl(previewUrl);
+      } else {
+        setImagePreviewUrl(null);
+      }
     } else {
       setEventData({ ...eventData, [name]: value });
     }
   };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -67,8 +79,8 @@ function App() {
         formData,
         {
           headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
           },
         }
       );
@@ -215,6 +227,11 @@ function App() {
                           <span className="font-semibold">Click to upload</span> or drag and drop
                         </p>
                         <p className="text-xs text-gray-500">PNG, JPG or GIF (MAX. 800x400px)</p>
+                        {eventData.image && (
+                          <p className="mt-2 text-sm text-gray-600">
+                            Selected: <span className="font-medium">{eventData.image.name}</span>
+                          </p>
+                        )}
                       </div>
                       <input
                         type="file"
@@ -225,17 +242,28 @@ function App() {
                       />
                     </label>
                   </div>
+
+                  {/* Preview Image */}
+                  {imagePreviewUrl && (
+                    <div className="mt-4 flex justify-center">
+                      <img
+                        src={imagePreviewUrl}
+                        alt="Preview"
+                        className="h-48 object-contain rounded-lg border border-gray-200 shadow"
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
+
 
               {/* Submit Button */}
               <div className="pt-6">
                 <button
                   type="submit"
                   disabled={loading}
-                  className={`w-full flex items-center justify-center px-8 py-4 text-lg font-medium text-white bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all ${
-                    loading ? "opacity-75 cursor-not-allowed" : ""
-                  }`}
+                  className={`w-full flex items-center justify-center px-8 py-4 text-lg font-medium text-white bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all ${loading ? "opacity-75 cursor-not-allowed" : ""
+                    }`}
                 >
                   {loading ? (
                     <>

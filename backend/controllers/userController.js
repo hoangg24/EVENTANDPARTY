@@ -3,90 +3,128 @@ import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import emailjs from "@emailjs/nodejs";
 import jwt from "jsonwebtoken";
+import mongoose from "mongoose";
 
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 
 import dotenv from "dotenv";
+import roleModel from "../models/roleModel.js";
+import Role from "../models/roleModel.js";
 dotenv.config();
 
+
 const userController = {
+
   registerUser: async (req, res) => {
     try {
-      const { username, email, password } = req.body;
+      const { username, email, password, isBlocked = false } = req.body;
+      let { role } = req.body;
 
-      if (!password) {
-        return res.status(400).json({ message: "Password is required" });
+      if (!username || !email || !password) {
+        return res.status(400).json({ message: "Thiếu thông tin bắt buộc" });
+      }
+
+      // Nếu role là tên (admin, user), tìm Role tương ứng
+      if (!mongoose.Types.ObjectId.isValid(role)) {
+        const roleDoc = await Role.findOne({ name: role || "user" }); // fallback = "user"
+        if (!roleDoc) {
+          return res.status(400).json({ message: "Role không hợp lệ!" });
+        }
+        role = roleDoc._id;
       }
 
       const existingUser = await User.findOne({ email });
       if (existingUser) {
-        return res.status(400).json({ message: "Email is already in use" });
+        return res.status(400).json({ message: "Email đã được sử dụng!" });
       }
 
       const newUser = new User({
         username,
         email,
         password,
-        role: "user",
+        role, 
+        isBlocked,
       });
 
-      await newUser.save();
-      res.status(201).json({ message: "Registration successful" });
+      // await newUser.save();
+
+      // res.status(201).json({ message: "Đăng ký thành công!", user: newUser });
+      const savedUser = await newUser.save();
+      const populatedUser = await User.findById(savedUser._id).populate("role", "name");
+
+      res.status(201).json({ message: "Đăng ký thành công!", user: populatedUser });
+
     } catch (error) {
-      res.status(500).json({ message: "Server error", error: error.message });
+      console.error("Lỗi đăng ký:", error.message);
+      res.status(500).json({ message: "Lỗi server", error: error.message });
     }
   },
 
   loginUser: async (req, res) => {
     try {
       const { email, password } = req.body;
-  
-      const user = await User.findOne({ email });
+
+      const user = await User.findOne({ email }).populate("role");
       if (!user) {
-        return res
-          .status(400)
-          .json({ message: "Email or password is incorrect" });
+        return res.status(400).json({ message: "Email hoặc mật khẩu không đúng" });
       }
-  
+
       const isMatch = await user.comparePassword(password);
       if (!isMatch) {
-        return res
-          .status(400)
-          .json({ message: "Email or password is incorrect" });
+        return res.status(400).json({ message: "Email hoặc mật khẩu không đúng" });
       }
-  
+
       const token = jwt.sign(
-        { id: user._id, username: user.username, role: user.role },
+        {
+          id: user._id,
+          username: user.username,
+          role: user.role?.name || "user" //  kiểm tra an toàn
+        },
         process.env.JWT_SECRET,
         { expiresIn: "1d" }
       );
-  
+
       res.status(200).json({
-        message: "Login successful",
+        message: "Đăng nhập thành công",
         token,
         user: {
           id: user._id,
           username: user.username,
           email: user.email,
-          role: user.role,
+          role: user.role, // giờ sẽ có name + description
           isBlocked: user.isBlocked,
         },
       });
+      console.log("User role:", user.role);
+
     } catch (error) {
-      console.error("Server error:", error.message); // Log server error
+      console.error("Server error:", error.message);
       res.status(500).json({ message: "Server error", error: error.message });
     }
-  },
+  }
+  ,
 
   // Get a list of all users
   getAllUsers: async (req, res) => {
     try {
-      const users = await User.find();
+      const users = await User.find().populate("role", "name"); //  chỉ lấy name + description
       res.status(200).json(users);
     } catch (error) {
       res.status(500).json({ message: "Server error", error: error.message });
     }
+  },
+
+
+  // Lấy thông tin người dùng theo ID
+  getUserById: async (req, res) => {
+    try {
+      const users = await User.findById(req.params.id);
+      res.status(200).json(users);
+    } catch (error) {
+      res.status(500).json({ message: "Server error", error: error.message });
+    }
+
   },
 
   // Update user information
