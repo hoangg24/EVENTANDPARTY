@@ -4,8 +4,10 @@ import { useNavigate } from "react-router-dom";
 import { Calendar, MapPin, Image as ImageIcon, Loader2 } from "lucide-react";
 
 
+
 function App() {
   const [categories, setCategories] = useState([]);
+  const [locations, setLocations] = useState([]);
   const [eventData, setEventData] = useState({
     name: "",
     date: "",
@@ -38,6 +40,24 @@ function App() {
       }
     };
     fetchCategories();
+    
+  }, []);
+  useEffect(() => {
+    const fetchLocations = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/locations`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setLocations(response.data); // Lưu danh sách địa điểm vào state
+      } catch (error) {
+        console.error("Error fetching locations:", error);
+      }
+    };
+  
+    fetchLocations();
   }, []);
 
   const handleChange = (e) => {
@@ -169,21 +189,21 @@ function App() {
 
               {/* Location */}
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">
-                  Location
-                </label>
-                <div className="relative">
-                  <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-                  <input
-                    type="text"
-                    name="location"
-                    value={eventData.location}
-                    onChange={handleChange}
-                    required
-                    placeholder="Enter event location"
-                    className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                  />
-                </div>
+                <label className="block text-sm font-medium text-gray-700">Location</label>
+                <select
+                  name="location"
+                  value={eventData.location}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                >
+                  <option value="" disabled>Select a location</option>
+                  {locations.map((location) => (
+                    <option key={location._id} value={location._id}>
+                      {location.name} - {location.city}, {location.country}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               {/* Description */}

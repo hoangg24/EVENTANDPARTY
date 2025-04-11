@@ -11,6 +11,7 @@ const EventList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [categories, setCategories] = useState([]);
+  const [locations, setLocations] = useState([]);
   const [searchCriteria, setSearchCriteria] = useState({
     name: "",
     date: "",
@@ -23,6 +24,7 @@ const EventList = () => {
     fetchUserInfo();
     fetchEvents();
     fetchCategories();
+    fetchLocations();
   }, []);
 
   const fetchUserInfo = () => {
@@ -46,6 +48,19 @@ const EventList = () => {
       setError("Unable to load event list!");
     } finally {
       setLoading(false);
+    }
+  };
+  const fetchLocations = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/locations`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setLocations(response.data); // Lưu danh sách địa điểm vào state
+    } catch (error) {
+      console.error("Error fetching locations:", error);
     }
   };
 
@@ -79,7 +94,7 @@ const EventList = () => {
     const categoryMatch = !searchCriteria.category || 
       event.category?.name?.toLowerCase().includes(searchCriteria.category.toLowerCase());
     const locationMatch = !searchCriteria.location || 
-      event.location?.toLowerCase().includes(searchCriteria.location.toLowerCase());
+      event.location?.name?.toLowerCase().includes(searchCriteria.location.toLowerCase());
     
     return nameMatch && dateMatch && categoryMatch && locationMatch;
   });
@@ -214,14 +229,19 @@ const EventList = () => {
             </div>
             <div className="relative">
               <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-              <input
-                type="text"
+              <select
                 name="location"
                 value={searchCriteria.location}
                 onChange={handleSearchChange}
-                placeholder="Search by location..."
-                className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent"
-              />
+                className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent appearance-none"
+              >
+                <option value="">All Locations</option>
+                {locations.map((loc) => (
+                  <option key={loc._id} value={loc.name}>
+                    {loc.name}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
         </motion.div>
@@ -323,7 +343,7 @@ const EventList = () => {
                       </div>
                       <div className="flex items-center gap-2">
                         <MapPin className="w-5 h-5" />
-                        <span>{event.location}</span>
+                        <span>{event.location?.name}</span>
                       </div>
                     </div>
                   </div>

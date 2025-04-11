@@ -4,7 +4,7 @@ const eventSchema = new mongoose.Schema({
     name: { type: String, required: true, trim: true },
     date: { type: Date, required: true },
     category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: true },
-    location: { type: String, required: true, trim: true },
+    location: { type: mongoose.Schema.Types.ObjectId, ref: 'Location', required: true }, 
     description: { type: String, trim: true }, // New description field
     image: { type: String, trim: true }, // New image field
     services: {

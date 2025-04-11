@@ -24,6 +24,7 @@ import ResetPasswordRequest from "./pages/ResetPasswordRequest.jsx";
 import ResetPassword from "./pages/ResetPassword.jsx";
 import ContactUs from "./pages/ContactUs.jsx";
 import Blocked from "./pages/Blocked.jsx"
+import LocationManagement from './components/LocationManagement.jsx'; 
 
 const LoginSuccess = () => {
   const location = useLocation();
@@ -63,6 +64,7 @@ const App = () => {
         <Route path="invoices/:id" element={<InvoiceDetails />} />
         <Route path="events/create" element={<CreateEvent />} />
         <Route path="categories" element={<CategoryManagement />} />
+        <Route path="locations" element={<LocationManagement />} />
         <Route path="payment/status/:orderId" element={<PaymentStatus />} />
         <Route path="/payment-result" element={<PaymentResult />} />
         <Route path="reset-password-request" element={<ResetPasswordRequest/>}></Route>
@@ -83,6 +85,7 @@ const App = () => {
         <Route path="services" element={<ServiceManagement />} />
         <Route path="categories" element={<CategoryManagement />} />
         <Route path="invoices" element={<InvoiceManagement />} />
+        <Route path="locations" element={<LocationManagement />} />
       </Route>
 
       {/* Unauthorized Route */}

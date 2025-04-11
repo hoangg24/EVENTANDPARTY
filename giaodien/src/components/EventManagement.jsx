@@ -116,7 +116,7 @@ const EventManagement = () => {
                   <p className="text-gray-600">
                     Category: {event.category?.name}
                   </p>
-                  <p className="text-gray-600">Location: {event.location}</p>
+                  <p className="text-gray-600">Location: {event.location?.name}</p>
                 </div>
                 <div className="flex gap-3">
                   <button

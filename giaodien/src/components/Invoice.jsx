@@ -139,7 +139,7 @@ const Invoice = () => {
                 </div>
                 <div className="flex items-center">
                   <MapPin className="w-5 h-5 mr-2 opacity-75" />
-                  <span>{invoice.event.location}</span>
+                  <span>{invoice.event.location?.name}</span>
                 </div>
               </div>
             </div>

@@ -278,7 +278,7 @@ const EventDetails = () => {
                         <input
                           type="text"
                           name="location"
-                          value={formData.location}
+                          value={formData.location.name}
                           onChange={handleInputChange}
                           className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500"
                         />
@@ -371,7 +371,7 @@ const EventDetails = () => {
                           Location
                         </h3>
                         <p className="text-indigo-700 leading-relaxed">
-                          {event.location}
+                          {event.location.name}
                         </p>
                       </div>
                     </div>

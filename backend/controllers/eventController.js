@@ -2,6 +2,7 @@ import Event from "../models/eventModel.js";
 import Service from "../models/service.js";
 import Invoice from "../models/invoiceModel.js";
 import Category from "../models/Category.js";
+import Location from "../models/Location.js";
 import mongoose from "mongoose";
 import fs from "fs/promises";
 import path, { dirname } from "path";
@@ -100,6 +101,7 @@ const eventController = {
         // Admin xem tất cả sự kiện
         events = await Event.find()
           .populate("category", "name")
+          .populate("location", "name")
           .populate("services.service", "name price");
       } else {
         // Người dùng thường chỉ xem công khai hoặc sự kiện họ tạo
@@ -107,6 +109,7 @@ const eventController = {
           $or: [{ isPublic: true }, { createdBy: userId }],
         })
           .populate("category", "name")
+          .populate("location", "name")
           .populate("services.service", "name price");
       }
 
@@ -130,6 +133,7 @@ const eventController = {
 
       const event = await Event.findById(id)
         .populate("category", "name")
+        .populate("location", "name")
         .populate("services.service", "name price description");
 
       if (!event) {
@@ -213,7 +217,8 @@ const eventController = {
 
       const updatedEvent = await Event.findByIdAndUpdate(id, updatedData, {
         new: true,
-      }).populate("category", "name");
+      }).populate("location", "name")
+      .populate("category", "name");
 
       res
         .status(200)
@@ -231,7 +236,7 @@ const eventController = {
       const { id } = req.params;
       const { name, date, location, description, category } = req.body;
       const userId = req.user.id;
-      const userRole = req.user.role;
+      const userRole = req.user.role; 
 
       // Validate event ID
       if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -291,7 +296,8 @@ const eventController = {
       // Update the event with only the provided fields
       const updatedEvent = await Event.findByIdAndUpdate(id, updatedData, {
         new: true, // Return the updated document
-      }).populate("category", "name");
+      }).populate("location", "name")
+      .populate("category", "name");
 
       res
         .status(200)
