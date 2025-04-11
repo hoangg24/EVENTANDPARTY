@@ -24,6 +24,8 @@ import ResetPasswordRequest from "./pages/ResetPasswordRequest.jsx";
 import ResetPassword from "./pages/ResetPassword.jsx";
 import ContactUs from "./pages/ContactUs.jsx";
 import Blocked from "./pages/Blocked.jsx"
+import { Toaster } from 'react-hot-toast';
+import RoleManagement from "./components/RoleManagement.jsx";
 
 const LoginSuccess = () => {
   const location = useLocation();
@@ -46,6 +48,8 @@ const LoginSuccess = () => {
 
 const App = () => {
   return (
+    <>
+    <Toaster position="top-right" reverseOrder={false} />
     <Routes>
       {/* Public Routes */}
       <Route path="/" element={<Layout />}>
@@ -72,6 +76,7 @@ const App = () => {
       </Route>
 
       {/* Protected Admin Routes */}
+      {/* <Toaster position="top-right" reverseOrder={false} /> */}
       <Route path="admin" element={
         <ProtectedRoute requiredRole="admin">
           <AdminLayout />
@@ -83,11 +88,13 @@ const App = () => {
         <Route path="services" element={<ServiceManagement />} />
         <Route path="categories" element={<CategoryManagement />} />
         <Route path="invoices" element={<InvoiceManagement />} />
+        <Route path="roles" element={<RoleManagement />} />
       </Route>
 
       {/* Unauthorized Route */}
       <Route path="unauthorized" element={<Unauthorized />} />
     </Routes>
+    </>
   );
 };
 

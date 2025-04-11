@@ -57,9 +57,9 @@ const categoryController={
     const { id } = req.params;
   
     // Kiểm tra ID có hợp lệ không
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ message: 'ID danh mục không hợp lệ' });
-    }
+    // if (!mongoose.Types.ObjectId.isValid(id)) {
+    //   return res.status(400).json({ message: 'ID danh mục không hợp lệ' });
+    // }
   
     try {
       const category = await Category.findById(id);

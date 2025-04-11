@@ -1,5 +1,4 @@
 import { User } from "../models/index.js";
-import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import emailjs from "@emailjs/nodejs";
 import jwt from "jsonwebtoken";
@@ -9,7 +8,6 @@ import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 
 import dotenv from "dotenv";
-import roleModel from "../models/roleModel.js";
 import Role from "../models/roleModel.js";
 dotenv.config();
 
@@ -140,7 +138,7 @@ const userController = {
         return res.status(404).json({ message: "User not found" });
       }
 
-      res.status(200).json(updatedUser);
+      res.status(200).json({ message: "User updated successfully", user: updatedUser });
     } catch (error) {
       res.status(500).json({ message: "Server error", error: error.message });
     }

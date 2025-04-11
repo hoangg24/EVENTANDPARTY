@@ -6,6 +6,8 @@ const authMiddleware = (req, res, next) => {
     const token = req.header('Authorization')?.split(' ')[1];
 
     if (!token) {
+        console.log("Token:", token);
+        console.log("JWT_SECRET:", process.env.JWT_SECRET);
         return res.status(401).json({ message: 'Không có token, quyền truy cập bị từ chối' });
     }
 
@@ -14,6 +16,8 @@ const authMiddleware = (req, res, next) => {
         req.user = decoded; // Lưu thông tin người dùng
         next(); // Tiếp tục xử lý nếu xác thực thành công
     } catch (error) {
+        console.log("Token:", token);
+        console.log("JWT_SECRET:", process.env.JWT_SECRET);
         res.status(401).json({ message: 'Token không hợp lệ' });
     }
 };

@@ -16,6 +16,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import toast from "react-hot-toast";
 
 const ServiceManagement = () => {
   const [services, setServices] = useState([]);
@@ -70,16 +71,16 @@ const ServiceManagement = () => {
     try {
       if (editingServiceId) {
         await updateService(editingServiceId, serviceForm);
-        alert("Service updated successfully!");
+        toast.success("Service updated successfully!");
       } else {
         await createService(serviceForm);
-        alert("Service added successfully!");
+        toast.success("Service added successfully!");
       }
       resetForm();
       fetchServices();
     } catch (error) {
       console.error("Error adding/updating service:", error);
-      alert("Unable to add/update service!");
+      toast.error("Unable to add/update service!");
     } finally {
       setLoading(false);
     }
@@ -90,11 +91,11 @@ const ServiceManagement = () => {
       setLoading(true);
       try {
         await deleteService(id);
-        alert("Service deleted successfully!");
+        toast.success("Service deleted successfully!");
         fetchServices();
       } catch (error) {
         console.error("Error deleting service:", error);
-        alert("Unable to delete service!");
+        toast.error("Unable to delete service!");
       } finally {
         setLoading(false);
       }

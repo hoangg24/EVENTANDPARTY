@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
@@ -44,9 +45,10 @@ const UserManagement = () => {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
         fetchUsers();
+        toast.success("User deleted successfully!");
       } catch (error) {
         console.error("Error deleting user:", error);
-        alert("Unable to delete user!");
+        toast.error("Unable to delete user!");
       } finally {
         setLoading(false);
       }
@@ -62,47 +64,47 @@ const UserManagement = () => {
         {},
         { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
       );
-      alert(response.data.message);
+      toast.success(response.data.message);
       fetchUsers();
     } catch (error) {
       console.error("Error toggling user block:", error);
-      alert("Unable to toggle user block status!");
+      toast.error("Unable to toggle user block status!");
     } finally {
       setLoading(false);
     }
   };
 
   // Submit form (create/update)
-  const handleSubmitForm = async (e) => {
-    e.preventDefault();
-    try {
-      setLoading(true);
-      if (isEditing) {
-        await axios.put(
-          `${import.meta.env.VITE_API_URL}/users/${editingUserId}`,
-          formData,
-          { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
-        );
-        alert("User information updated successfully!");
-      } else {
-        await axios.post(`${import.meta.env.VITE_API_URL}/users`, formData, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        });
-        alert("New user added successfully!");
+    const handleSubmitForm = async (e) => {
+      e.preventDefault();
+      try {
+        setLoading(true);
+        if (isEditing) {
+          await axios.put(
+            `${import.meta.env.VITE_API_URL}/users/${editingUserId}`,
+            formData,
+            { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+          );
+          toast.success("User information updated successfully!");
+        } else {
+          await axios.post(`${import.meta.env.VITE_API_URL}/users`, formData, {
+            headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+          });
+          toast.success("New user added successfully!");
+        }
+        fetchUsers();
+        resetForm();
+      } catch (error) {
+        console.error("Error saving user:", error);
+        toast.error("Unable to save user information!");
+      } finally {
+        setLoading(false);
       }
-      fetchUsers();
-      resetForm();
-    } catch (error) {
-      console.error("Error saving user:", error);
-      alert("Unable to save user information!");
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
 
   // Edit user
   const handleEditUser = (user) => {
-    setFormData({ username: user.username, email: user.email, role: user.role });
+    setFormData({ username: user.username, email: user.email, role: user.role?.name });
     setIsEditing(true);
     setEditingUserId(user._id);
     setShowForm(true); // Show the form when editing
@@ -264,7 +266,7 @@ const UserManagement = () => {
                   >
                     <td className="py-4 px-6">{user.username}</td>
                     <td className="py-4 px-6">{user.email}</td>
-                    <td className="py-4 px-6 capitalize">{user.role}</td>
+                    <td className="py-4 px-6 capitalize">{user.role?.name}</td>
                     <td className="py-4 px-6">
                       <span
                         className={`px-3 py-1 rounded-full text-sm font-medium ${

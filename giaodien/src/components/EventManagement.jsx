@@ -11,6 +11,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import toast from "react-hot-toast";
 
 const EventManagement = () => {
   const [events, setEvents] = useState([]);
@@ -45,11 +46,11 @@ const EventManagement = () => {
       setLoading(true);
       try {
         await deleteEvent(id);
-        alert("Event deleted successfully!");
+        toast.success("Event deleted successfully!");
         fetchEvents();
       } catch (error) {
         console.error("Error deleting event:", error);
-        alert("Unable to delete event!");
+        toast.error("Unable to delete event!");
       } finally {
         setLoading(false);
       }

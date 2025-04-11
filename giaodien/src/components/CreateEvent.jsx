@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Calendar, MapPin, Image as ImageIcon, Loader2 } from "lucide-react";
+import toast from 'react-hot-toast';
 
 
 function App() {
@@ -84,7 +85,8 @@ function App() {
           },
         }
       );
-      setSuccessMessage("Event created successfully!");
+      toast.success("Event created successfully!");
+//      setSuccessMessage("Event created successfully!");
       setTimeout(() => {
         navigate("/eventlist");
       }, 1500);
@@ -153,6 +155,7 @@ function App() {
                       value={eventData.date}
                       onChange={handleChange}
                       required
+                      min={new Date().toISOString().split("T")[0]} // giới hạn ngày tối thiểu là hôm nay
                       className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                     />
                   </div>

@@ -5,6 +5,7 @@ import {
   updateCategory,
   deleteCategory,
 } from "../services/categoryService";
+import toast from "react-hot-toast";
 
 const CategoryManagement = () => {
   const [categories, setCategories] = useState([]);
@@ -38,16 +39,16 @@ const CategoryManagement = () => {
     try {
       if (editingCategoryId) {
         await updateCategory(editingCategoryId, formData);
-        alert("Category updated successfully!");
+        toast.success("Category updated successfully!");
       } else {
         await createCategory(formData);
-        alert("Category added successfully!");
+        toast.success("Category added successfully!");
       }
       resetForm();
       fetchCategories();
     } catch (error) {
       console.error("Error adding/updating category:", error);
-      alert("Unable to add/update category!");
+      toast.error("Unable to add/update category!");
     } finally {
       setLoading(false);
     }
@@ -63,11 +64,11 @@ const CategoryManagement = () => {
       setLoading(true);
       try {
         await deleteCategory(id);
-        alert("Category deleted successfully!");
+        toast.success("Category deleted successfully!");
         fetchCategories();
       } catch (error) {
         console.error("Error deleting category:", error);
-        alert("Unable to delete category!");
+        toast.error("Unable to delete category!");
       } finally {
         setLoading(false);
       }

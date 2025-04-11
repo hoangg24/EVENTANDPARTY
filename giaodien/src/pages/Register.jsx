@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { User, Mail, Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import toast from 'react-hot-toast';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -27,10 +28,10 @@ const Register = () => {
     setIsSubmitting(true);
     try {
       const response = await axios.post(`${import.meta.env.VITE_API_URL}/users/register`, formData);
-      alert(response.data.message);
+      toast.success(response.data.message);
       navigate('/login');
     } catch (error) {
-      alert(error.response.data.message);
+      toast.error(error.response.data.message);
     } finally {
       setIsSubmitting(false);
     }
