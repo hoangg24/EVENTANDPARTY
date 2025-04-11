@@ -25,6 +25,7 @@ const AdminLayout = () => {
     { name: "Category Management", path: "/admin/categories", icon: LayoutGrid },
     { name: "Invoice Management", path: "/admin/invoices", icon: FileText },
     { name: "Location Management", path: "/admin/locations", icon: FileText },
+    { name: "Bug Log Management", path: "/admin/buglogs", icon: FileText },
   ];
 
   const handleLogout = () => {

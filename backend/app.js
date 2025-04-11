@@ -14,6 +14,9 @@ import invoiceRoutes from './routes/invoiceRoutes.js';
 import categoryRoutes from './routes/categoryRoutes.js'; 
 import paymentRoutes from './routes/paymentRoutes.js';
 import locationRoutes from './routes/locationRoutes.js';
+import errorLogger from './middlewares/errorLogger.js';
+import bugLogRoutes from './routes/bugLogRoutes.js';
+import testRoutes from './routes/testRoutes.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -45,7 +48,16 @@ app.use('/api/locations', locationRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
+app.use('/api/buglogs', bugLogRoutes);
+app.use('/api/test', testRoutes);
+// Middleware ghi log lỗi
+app.use(errorLogger);
+// Middleware xử lý lỗi
+app.use((err, req, res, next) => {
+  res.status(err.statusCode || 500).json({
+    message: err.message || 'Internal Server Error',
+  });
+});
 app.listen(PORT, async () => {
     await connectDB(); // Kết nối với MongoDB
     console.log(`Server is running on http://localhost:${PORT}`);

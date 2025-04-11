@@ -3,7 +3,6 @@ import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import emailjs from "@emailjs/nodejs";
 import jwt from "jsonwebtoken";
-
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 
@@ -11,7 +10,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const userController = {
-  registerUser: async (req, res) => {
+  registerUser: async (req, res, next) => {
     try {
       const { username, email, password } = req.body;
   
@@ -29,12 +28,13 @@ const userController = {
             "Password must be at least 8 characters long, include uppercase, lowercase, a number, and a special character",
         });
       }
-  
       const existingUser = await User.findOne({ email });
       if (existingUser) {
-        return res.status(400).json({ message: "Email is already in use" });
+        const err = new Error("Email is already in use");
+        err.statusCode = 400;
+        next(err); // 👉 tự gọi để log bug
+        return res.status(400).json({ message: err.message });
       }
-  
       const newUser = new User({
         username,
         email,
@@ -45,7 +45,7 @@ const userController = {
       await newUser.save();
       res.status(201).json({ message: "Registration successful" });
     } catch (error) {
-      res.status(500).json({ message: "Server error", error: error.message });
+      next(error); // Ghi log lỗi vào BugLog
     }
   },
 

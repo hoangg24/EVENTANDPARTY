@@ -13,7 +13,7 @@ const __dirname = dirname(__filename);
 
 const eventController = {
   // Tạo sự kiện mới
-  createEvent: async (req, res) => {
+  createEvent: async (req, res, next) => {
     try {
       const {
         name,
@@ -25,26 +25,33 @@ const eventController = {
         isPublic,
       } = req.body;
       const userId = req.user.id;
-
+  
       let imagePath = "";
       if (req.file) {
         imagePath = `/uploads/${req.file.filename}`;
       }
-
+  
       // Kiểm tra danh mục
       if (!mongoose.Types.ObjectId.isValid(category)) {
-        return res.status(400).json({ message: "ID danh mục không hợp lệ!" });
+        const err = new Error("ID danh mục không hợp lệ!");
+        err.statusCode = 400;
+        return next(err); 
       }
+  
       if (new Date(date) < new Date()) {
-        return res.status(400).json({ message: "Ngày không được nằm trong quá khứ!" });
+        const err = new Error("Ngày không được nằm trong quá khứ!");
+        err.statusCode = 400;
+        return next(err);
       }
-
+  
       const existingCategory = await Category.findById(category);
       if (!existingCategory) {
-        return res.status(404).json({ message: "Danh mục không tồn tại!" });
+        const err = new Error("Danh mục không tồn tại!");
+        err.statusCode = 404;
+        return next(err); 
       }
-
-      // Kiểm tra danh sách dịch vụ nếu không rỗng
+  
+      // Kiểm tra danh sách dịch vụ nếu có
       let populatedServices = [];
       if (services.length > 0) {
         populatedServices = await Promise.all(
@@ -64,7 +71,7 @@ const eventController = {
           })
         );
       }
-
+  
       // Tạo sự kiện mới
       const newEvent = new Event({
         name,
@@ -77,16 +84,15 @@ const eventController = {
         isPublic,
         createdBy: userId,
       });
+  
       const savedEvent = await newEvent.save();
-
-      res
-        .status(201)
-        .json({ message: "Tạo sự kiện thành công!", event: savedEvent });
+  
+      res.status(201).json({
+        message: "Tạo sự kiện thành công!",
+        event: savedEvent,
+      });
     } catch (error) {
-      console.error("Lỗi khi tạo sự kiện:", error.message);
-      res
-        .status(500)
-        .json({ message: "Lỗi khi tạo sự kiện!", error: error.message });
+      next(error); 
     }
   },
 
@@ -224,7 +230,6 @@ const eventController = {
         .status(200)
         .json({ message: "Cập nhật sự kiện thành công!", event: updatedEvent });
     } catch (error) {
-      console.error("Lỗi khi cập nhật sự kiện:", error.message);
       res
         .status(500)
         .json({ message: "Lỗi khi cập nhật sự kiện!", error: error.message });

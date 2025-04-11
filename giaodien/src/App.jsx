@@ -25,6 +25,7 @@ import ResetPassword from "./pages/ResetPassword.jsx";
 import ContactUs from "./pages/ContactUs.jsx";
 import Blocked from "./pages/Blocked.jsx"
 import LocationManagement from './components/LocationManagement.jsx'; 
+import BugLogManagement from './components/BuglogManagement.jsx'; // Import BugLogManagement
 
 const LoginSuccess = () => {
   const location = useLocation();
@@ -86,6 +87,7 @@ const App = () => {
         <Route path="categories" element={<CategoryManagement />} />
         <Route path="invoices" element={<InvoiceManagement />} />
         <Route path="locations" element={<LocationManagement />} />
+        <Route path="buglogs" element={<BugLogManagement />} />
       </Route>
 
       {/* Unauthorized Route */}
